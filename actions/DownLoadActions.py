@@ -1,49 +1,80 @@
 from Interface.IDownloadInterface import IDownloadAction
 from models.metaData import NeeqTaskMetaData
+import requests
 
 class NeeqWebDownloadAction(IDownloadAction):
     downloadurl=""
-    requestobj=None #下载对象
     action_task_meta_data="";#执行下载的参数
-    current_response_data=""#爬取报文后得到的源数据。
-    current_post_form_data=""#发送post的数据。
+    current_status="init"#init,runing,stop
+    current_response_json_data=""#爬取报文后得到的源数据。
+    current_post_form_data={
+    "disclosureType": "5"
+    "page": "0"
+    "companyCd":"" 
+    "isNewThree": "1"
+    "startTime": "2018-10-17"
+    "endTime": "2018-11-16"
+    "keyword": "关键字"
+    "xxfcbj": ""
+    }
     current_header_data=""#发送post涉及的header
-    download_data_set=[NeeqTaskMetaData()]#存储下载数据的list。
+    download_data_list=[]#存储下载数据的list。
 
     """初始化化函数"""
     def __init__(self):
         pass
 
     """重新初始化下载参数"""
-    def reset_action_common(self,NeeqTaskMetaDataObj):
-        self.action_task_meta_data=NeeqTaskMetaDataObj
-        self.download_data_set=[]
+    def reset_action_commond(self,NeeqTaskMetaDataObj):
+        self.current_post_form_data["disclosureType"]=NeeqTaskMetaDataObj.get_disclosure_value()
+        self.current_post_form_data["companyCd"]=NeeqTaskMetaDataObj.get_companyCD()
+        self.current_post_form_data["keyword"]=NeeqTaskMetaDataObj.get_keywords()
+        self.current_post_form_data["startTime"]=NeeqTaskMetaDataObj.get_beg_date()
+        self.current_post_form_data["endTime"]=NeeqTaskMetaDataObj.get_end_date()
 
     def execute_action(self,NeeqTaskMetaDataObj):
-        self.action_task_meta_data=NeeqTaskMetaDataObj
+        if not isinstance(NeeqTaskMetaDataObj,NeeqTaskMetaData):
+            return []
+        self.reset_action_commond(NeeqTaskMetaDataObj)
         self.download_data_set=[]
         while not self.in_stop_status():
             self.request_action()
             self.analysis_message_action()
-        return self.download_data_set
+        return self.download_data_list
         
     def request_action(self):
         """发送web请求，获得返回内容"""]
-        paydata=make_form_data()
+        paydata=self.make_form_data()
+        response=requests.post(self.url,json=paydata)
+        self.current_response_json_data=response.json()#获得json函数。
         #执行request函数
 
     def make_form_data(self):
         """生成web请求需要的form数据"""
-        pass
+        self.current_post_form_data["page"]=0
+        return self.current_response_data
+        
 
     def analysis_message_action(self):
         """分析报文，对报文内容进行拆分，可以重新生成form data ，header，填充数据，"""
-        split_message_action()
+        firstPage=self.current_response_json_data['listInfo']['firstPage']
+        lastPage=self.current_response_json_data['listInfo']['lastPage']
+        number=self.current_response_json_data['listInfo']['number']
+        size=self.current_response_json_data['listInfo']['size']
+        totalElements=self.current_response_json_data['listInfo']['totalElements']
+        totalPages=self.current_response_json_data['listInfo']['totalPages']
+
+        if lastPage==True:
+            self.current_status="stop"
+        if numberOfElements<size:
+            self.current_status="stop"
+        self.current_post_form_data["page"]=number+1
+        self.download_data_list.extend(self.current_response_json_data['listInfo']['content']) 
 
 
-    def split_message_action(self,):
-        """拆分获取的报文，将报文转化为转为为不同的状态"""
-    pass
+    def in_stop_status(self):
+        return self.current_status=="stop"
 
-    def in_stop_status():
-        pass
+if __name__ == "__main__":
+    task_obj=NeeqTaskMetaData()
+    task_obj.beg_date
