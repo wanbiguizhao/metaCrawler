@@ -47,6 +47,40 @@ class NeeqTaskMetaData:
 class NeeqWebDownloadResultData:
     """download成功后，返回的源数据"""
     """源数据，存放json格式的数据"""
+    """ 示例数据
+    {
+                    "companyCd":"837296",
+                    "companyName":"成航发",
+                    "dKey":"",
+                    "destFilePath":"/disclosure/2018/2018-11-16/1542369486_969828.pdf",
+                    "disclosureCode":"97f8e58566d41c0a01671c61bb357ee8",
+                    "disclosurePostTitle":"",
+                    "disclosureSubType":"",
+                    "disclosureTitle":"[临时公告]成航发:关于修改经营范围及修订公司章程公告(补发)",
+                    "disclosureType":"9504",
+                    "disclosureYear":0,
+                    "fileExt":"pdf",
+                    "filePath":"",
+                    "isEmergency":1,
+                    "isNewThree":1,
+                    "modifyTimes":0,
+                    "publishDate":"2018-11-16",
+                    "publishOrg":"9601-1003",
+                    "state":1,
+                    "upDate":{
+                        "date":16,
+                        "day":5,
+                        "hours":19,
+                        "minutes":57,
+                        "month":10,
+                        "seconds":6,
+                        "time":1542369426000,
+                        "timezoneOffset":-480,
+                        "year":118
+                    },
+                    "xxfcbj":"0"
+                }
+    """
     meta_data = {}
 
     def get_company_name(self):
@@ -67,15 +101,49 @@ class NeeqWebDownloadResultData:
 
 class NeeqNoticeMetaModel(Model):
     """ 数据持久化模型，负责将股转公告的json数据映射到数据库中"""
+    """ 示例数据
+    {
+                    "companyCd":"837296",
+                    "companyName":"成航发",
+                    "dKey":"",
+                    "destFilePath":"/disclosure/2018/2018-11-16/1542369486_969828.pdf",
+                    "disclosureCode":"97f8e58566d41c0a01671c61bb357ee8",
+                    "disclosurePostTitle":"",
+                    "disclosureSubType":"",
+                    "disclosureTitle":"[临时公告]成航发:关于修改经营范围及修订公司章程公告(补发)",
+                    "disclosureType":"9504",
+                    "disclosureYear":0,
+                    "fileExt":"pdf",
+                    "filePath":"",
+                    "isEmergency":1,
+                    "isNewThree":1,
+                    "modifyTimes":0,
+                    "publishDate":"2018-11-16",
+                    "publishOrg":"9601-1003",
+                    "state":1,
+                    "upDate":{
+                        "date":16,
+                        "day":5,
+                        "hours":19,
+                        "minutes":57,
+                        "month":10,
+                        "seconds":6,
+                        "time":1542369426000,
+                        "timezoneOffset":-480,
+                        "year":118
+                    },
+                    "xxfcbj":"0"
+                }
+    """
     json_meta_data = {}  # "原来的json原始数据"
     meta_str_data = CharField(max_length=500)  # metaData str格式的数据情况
     uuid = CharField("")  # "数据唯一的id"
-    company_code = CharField(default="")  # "公司代码"
-    company_name = CharField(default="")  # "公司名称"
-    title = CharField(default="")  # "公告标题"
-    pub_date = CharField(default="")  # "发布日期"
+    company_code = CharField(default="")  # "公司代码"  companyCd
+    company_name = CharField(default="")  # "公司名称" companyName
+    title = CharField(default="")  # "公告标题"   disclosureTitle
+    pub_date = CharField(default="")  # "发布日期"  publishDate
+    pdf_link = CharField(default="")  # "pdf的下载链接"   destFilePath
 
-    pdf_link = CharField(default="")  # "pdf的下载链接"
     pdf_download_flag = BooleanField(default=False)  # "下载标志位"
     pdf_local_path = CharField(default="")  # "本地下载路径"
 
@@ -133,6 +201,7 @@ class NeeqNoticeMetaModel(Model):
         self.company_name = jsonData["companyName"]
         self.title = jsonData["disclosureTitle"]
         self.pub_date = jsonData["publishDate"]
+
 
         disclosureCode = jsonData["disclosureCode"]
         destFilePath = jsonData["destFilePath"]
