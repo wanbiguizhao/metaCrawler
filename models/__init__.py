@@ -1,2 +1,2 @@
 from peewee import SqliteDatabase
-dataxdb = SqliteDatabase('tes.db')
+dataxdb = SqliteDatabase('test.db')

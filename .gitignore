@@ -1,0 +1,5 @@
+*.db
+envs
+envs/*
+__pycache__
+.idea

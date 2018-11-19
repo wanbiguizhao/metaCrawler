@@ -17,21 +17,16 @@ class MetaTaskManager:
             new_task_data_obj=copy(taskMetaDataobj)
             new_task_data_obj.beg_date=date_day.strftime("%Y-%m-%d")
             new_task_data_obj.end_date=date_day.strftime("%Y-%m-%d")#将周期变成变天下载。
-
             download_data_set=self.downloadActions_obj.execute_action(new_task_data_obj)
             self.storge_obj.extend_meta_data(download_data_set)
-            
             self.storge_obj.save()
     def analysis_task_meta(self):
         """按照日子将天数拆分成数组，每天取一次数据"""
         beg_date=self.task_meta_data_obj.get_beg_date()
         end_date=self.task_meta_data_obj.get_end_date()
-        x=(end_date-beg_date).days
+        x=(end_date-beg_date).days+1
         self.date_list=[beg_date+timedelta(days=dd) for dd in range(x)]
         print(self.date_list)
-
-
-
 
 #各种命令行或者其他的接口
 def all_commond_action():
@@ -41,7 +36,7 @@ def all_commond_action():
     pass
 
 if __name__ == "__main__":
-    task_obj = NeeqTaskMetaData({"beg_date":"2018-10-09","end_date":"2018-10-19","keywords":"国"})
+    task_obj = NeeqTaskMetaData({"beg_date":"2018-10-09","end_date":"2018-10-11","keywords":"国"})
     task = MetaTaskManager()
     taskMetaDataobj = ""  # 根据参数生成命令
     task.run_task(task_obj)

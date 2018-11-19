@@ -2,6 +2,7 @@
 from models.metaData import NeeqTaskMetaData
 import requests
 import json
+from models.metaData import NeeqNoticeMetaModel
 class NeeqWebDownloadAction:
     downloadurl="http://www.neeq.com.cn/disclosureInfoController/infoResult.do"
     action_task_meta_data="";#执行下载的参数
@@ -24,19 +25,23 @@ class NeeqWebDownloadAction:
     def __init__(self):
         pass
 
-    """重新初始化下载参数"""
+    """重新初始化下载参数以及下载状态"""
     def reset_action_commond(self,NeeqTaskMetaDataObj):
         self.current_post_form_data["disclosureType"]=NeeqTaskMetaDataObj.get_disclosure_type()
         self.current_post_form_data["companyCd"]=NeeqTaskMetaDataObj.get_companyCD()
         self.current_post_form_data["keyword"]=NeeqTaskMetaDataObj.get_keywords()
         self.current_post_form_data["startTime"]=NeeqTaskMetaDataObj.get_beg_date().strftime("%Y-%m-%d")
         self.current_post_form_data["endTime"]=NeeqTaskMetaDataObj.get_end_date().strftime("%Y-%m-%d")
+        self.current_post_form_data["page"]=0
+
+        self.download_data_list=[]
+        self.current_status = "init"
 
     def execute_action(self,NeeqTaskMetaDataObj):
         if not isinstance(NeeqTaskMetaDataObj,NeeqTaskMetaData):
             return []
         self.reset_action_commond(NeeqTaskMetaDataObj)
-        self.download_data_set=[]
+
         while not self.in_stop_status():
             self.request_action()
             self.analysis_message_action()
@@ -64,13 +69,18 @@ class NeeqWebDownloadAction:
         totalElements=self.current_response_json_data['listInfo']['totalElements']
         totalPages=self.current_response_json_data['listInfo']['totalPages']
         numberOfElements = self.current_response_json_data['listInfo']['numberOfElements']
-
         if lastPage==True:
             self.current_status="stop"
         if numberOfElements<size:
             self.current_status="stop"
         self.current_post_form_data["page"]=number+1
-        self.download_data_list.extend(self.current_response_json_data['listInfo']['content']) 
+        json_content_list=self.current_response_json_data['listInfo']['content']
+        model_obj_list=[]
+        for json_meta_obj in json_content_list:
+            meta_model_obj=NeeqNoticeMetaModel()
+            meta_model_obj.load_meta_data(json_meta_obj)
+            model_obj_list.append(meta_model_obj)
+        self.download_data_list.extend(model_obj_list)
 
 
     def in_stop_status(self):
