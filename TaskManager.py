@@ -36,7 +36,7 @@ def all_commond_action():
     pass
 
 if __name__ == "__main__":
-    task_obj = NeeqTaskMetaData({"beg_date":"2018-10-09","end_date":"2018-10-11","keywords":"国"})
+    task_obj = NeeqTaskMetaData({"beg_date":"2018-10-12","end_date":"2018-10-15","keywords":"国"})
     task = MetaTaskManager()
     taskMetaDataobj = ""  # 根据参数生成命令
     task.run_task(task_obj)

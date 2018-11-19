@@ -1,6 +1,6 @@
 from peewee import *
 from models import dataxdb
-from datetime import date
+from datetime import date,datetime
 import uuid, json
 
 
@@ -196,11 +196,13 @@ class NeeqNoticeMetaModel(Model):
                 }
         """
         # 将json数据转化为str类型的数据。
+        self.createDatetime=datetime.now().strftime("%Y-%m-%d %H:%M:%S %f")
         self.json_meta_data = jsonData
         self.company_code = jsonData["companyCd"]
         self.company_name = jsonData["companyName"]
         self.title = jsonData["disclosureTitle"]
         self.pub_date = jsonData["publishDate"]
+        self.pdf_link = jsonData["destFilePath"]
 
 
         disclosureCode = jsonData["disclosureCode"]
@@ -230,7 +232,12 @@ class NeeqNoticeMetaModel(Model):
         return {
             "meta_str_data": self.meta_str_data,
             "uuid": self.uuid,
-            "company_code": self.company_code
+            "company_code": self.company_code,
+            "company_name": self.company_name,
+            "title": self.title,
+            "pub_date": self.pub_date,
+            "pdf_link": self.pdf_link,
+            "update_datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S %f")
         }
 
 
