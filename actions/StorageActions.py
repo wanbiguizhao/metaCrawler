@@ -14,7 +14,7 @@ class DBStorage():
             NeeqNoticeMetaModel.insert_many(batch_insert_data).execute()#执行批量存储
         self.meta_data_list=[]#释放数据
     def append_meta_data(self,meta_data_obj):
-        """单个存储meta data"""
+        """单个存储NeeqNoticeMetaModel对象"""
         if not isinstance(meta_data_obj,NeeqNoticeMetaModel):
             return "Error"
         if NeeqNoticeMetaModel.get_or_none(
@@ -24,7 +24,7 @@ class DBStorage():
         else:
             print(meta_data_obj.to_dict(),"检查是否已经存在")
     def extend_meta_data(self,meta_data_list):
-        """数组结构拓展队列"""
+        """批量添加要入库的NeeqNoticeMetaModel对象"""
         for meta_data_obj in meta_data_list:
             self.append_meta_data(meta_data_obj)
         
