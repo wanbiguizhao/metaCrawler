@@ -48,14 +48,24 @@ class NeeqPDFDownloadActions:
 
     def get_abs_file_name(self):
         return self.pre_path+self.local_dir_path+"/"+self.filename
-
     def get_local_path(self):
         return self.local_dir_path
+
+
+def check_local_path():
+    """检查文件夹路径是否存在，如果不存在创建路径"""
+    l_path="disclosure/2017/2088/234/234"
+    if not os.path.exists(l_path):
+        os.makedirs(l_path)
+
 if __name__ == "__main__":
     print("helloworld")
     action=NeeqPDFDownloadActions()
-    action.execute_action({
+    print(
+        action.execute_action({
         "uuid": "xxxxxxxx",
         "origin_url": "http://www.neeq.com.cn",
         "download_link": "/disclosure/2018/2018-10-12/1539336345_253551.pdf",
     })
+    )
+    check_local_path()
