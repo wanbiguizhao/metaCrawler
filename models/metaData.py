@@ -44,6 +44,10 @@ class NeeqTaskMetaData:
         return self.filterRegex
 
 
+class NeeqTaskPDFData:
+    """下载pdf时，涉及的参数"""
+
+
 class NeeqWebDownloadResultData:
     """download成功后，返回的源数据"""
     """源数据，存放json格式的数据"""
